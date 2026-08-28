@@ -2,6 +2,9 @@
 // config.ts — New Look Salon
 // ─────────────────────────────────────────────────────────────────────────────
 
+import logoImg from './assets/logo.jpeg';
+import heroImg from './assets/hero.png';
+
 export interface Service {
   id: string;
   category: string;
@@ -64,8 +67,8 @@ export const config = {
   ] as OpeningHour[],
 
   // ─── BRANDING ──────────────────────────────────────────────────────────────
-  logo: '/logo.jpeg',
-  heroImage: '/images/hero.png',
+  logo: logoImg,
+  heroImage: heroImg,
   primaryColor: '#C8935A',
   accentColor: '#2D2926',
 
