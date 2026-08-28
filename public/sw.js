@@ -6,18 +6,16 @@
 // Versioned cache: bumping CACHE_VERSION deletes all old caches on activation.
 // Update deployment → customers see new offers/prices/contact info immediately.
 
-const CACHE_VERSION  = 'v1';
+const CACHE_VERSION  = 'v2';
 const STATIC_CACHE   = `nls-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE  = `nls-dynamic-${CACHE_VERSION}`;
 
-// Assets safe to cache-first (will not contain business data)
+// Assets safe to cache-first
 const STATIC_ASSETS = [
-  '/src/styles/tokens.css',
-  '/src/styles/base.css',
-  '/src/styles/components.css',
-  '/src/styles/animations.css',
-  '/src/styles/sections.css',
-  '/src/styles/desktop.css',
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/logo.jpeg',
 ];
 
 // ── Install: pre-cache nothing critical (network-first for all pages) ──────
