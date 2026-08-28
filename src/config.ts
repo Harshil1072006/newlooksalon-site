@@ -4,6 +4,11 @@
 
 import logoImg from './assets/logo.jpeg';
 import heroImg from './assets/hero.png';
+import hairImg from './assets/services/hair.png';
+import treatmentImg from './assets/services/treatment.png';
+import skinImg from './assets/services/skin.png';
+import makeupImg from './assets/services/makeup.png';
+import bridalImg from './assets/services/bridal.png';
 
 export interface Service {
   id: string;
@@ -89,7 +94,7 @@ export const config = {
       category: 'Hair',
       name: 'Hair Spa',
       description: 'Deep nourishing treatment that repairs, conditions and adds brilliant shine to your hair.',
-      image: '/images/services/hair.png',
+      image: hairImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'All hair types',
@@ -101,7 +106,7 @@ export const config = {
       category: 'Hair',
       name: 'Hair Colour',
       description: 'Professional hair colouring — from natural shades to bold transformations.',
-      image: '/images/services/hair.png',
+      image: hairImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'All hair types',
@@ -113,7 +118,7 @@ export const config = {
       category: 'Treatments',
       name: 'Hair Regrowth Treatment',
       description: 'Specialised treatment that targets hair fall and thinning for healthier, fuller hair.',
-      image: '/images/services/treatment.png',
+      image: treatmentImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'Hair fall concerns',
@@ -126,7 +131,7 @@ export const config = {
       category: 'Treatments',
       name: 'Keratin Treatment',
       description: 'Smooths, de-frizzes and strengthens hair for weeks of effortless styling.',
-      image: '/images/services/treatment.png',
+      image: treatmentImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'Frizzy or damaged hair',
@@ -138,7 +143,7 @@ export const config = {
       category: 'Skin & Facials',
       name: 'Facial',
       description: 'Rejuvenating skin treatment for glow, hydration and radiance.',
-      image: '/images/services/skin.png',
+      image: skinImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'All skin types',
@@ -150,7 +155,7 @@ export const config = {
       category: 'Skin & Facials',
       name: 'Skin Cleanup',
       description: 'Quick and effective cleansing treatment to clear pores and refresh skin.',
-      image: '/images/services/skin.png',
+      image: skinImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'All skin types',
@@ -162,7 +167,7 @@ export const config = {
       category: 'Makeup',
       name: 'Party Makeup',
       description: 'Glamorous makeup for parties, events and special occasions.',
-      image: '/images/services/makeup.png',
+      image: makeupImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'All occasions',
@@ -174,7 +179,7 @@ export const config = {
       category: 'Bridal',
       name: 'Bridal Makeup',
       description: 'Complete bridal look crafted for your most important day.',
-      image: '/images/services/bridal.png',
+      image: bridalImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'Brides',
@@ -186,7 +191,7 @@ export const config = {
       category: 'Bridal',
       name: 'Bridal Package',
       description: 'All-inclusive bridal package covering hair, makeup, skin prep and more.',
-      image: '/images/services/bridal.png',
+      image: bridalImg,
       startingPrice: null,
       duration: null,
       suitableFor: 'Brides & bridal parties',
