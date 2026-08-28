@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { config } from "../config";
 import { openWhatsApp } from "../utils";
+import logoImg from "../assets/logo.jpeg";
 
 const navLinks = [
   { label: "Home", href: "#home", active: true },
@@ -18,13 +19,11 @@ export default function Header() {
       <div className="max-w-[1440px] mx-auto px-6 lg:px-16 min-h-[96px] py-3 flex items-center justify-between">
         {/* Logo */}
         <a href="#home" className="flex items-center gap-3 shrink-0">
-          {config.logo ? (
-            <img src={config.logo} alt={config.name} className="h-[64px] md:h-[76px] w-auto rounded-full object-cover shadow-sm border border-white/10" />
-          ) : (
-            <span className="font-['Poppins',sans-serif] font-bold text-white text-[20px] tracking-wide">
-              {config.name}
-            </span>
-          )}
+          <img
+            src={logoImg}
+            alt={config.name}
+            className="h-[60px] w-[60px] md:h-[72px] md:w-[72px] rounded-full object-cover shadow-md border border-[#fbb034]/30"
+          />
         </a>
 
         {/* Desktop Nav */}
