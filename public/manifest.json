@@ -1,0 +1,23 @@
+{
+  "name": "New Look Salon",
+  "short_name": "New Look",
+  "description": "Women's hair, skin & beauty salon in Anand, Gujarat. Book appointments, explore services and connect with us.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FEFAF6",
+  "theme_color": "#C8935A",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/logo.jpeg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["beauty", "lifestyle", "health"],
+  "prefer_related_applications": false
+}

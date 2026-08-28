@@ -1,0 +1,18 @@
+{
+  "title": "New Look Salon — Hair, Skin & Beauty Services in Anand, Gujarat",
+  "description": "New Look Salon in Anand, Gujarat. 14+ years of expert hair, skin, makeup & bridal services. 4.9★ Google rating · 300+ reviews. Book your appointment today.",
+  "language": "en-IN",
+  "robots": {
+    "index": true
+  },
+  "icons": {
+    "icon": "/favicon-192.png"
+  },
+  "openGraph": {
+    "image": "/images/hero.png"
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
