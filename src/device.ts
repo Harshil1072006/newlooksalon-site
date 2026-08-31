@@ -124,76 +124,48 @@ export function openWhatsAppSmart(phone: string, message: string): void {
 // 2. SAVE CONTACT (vCard)
 // ─────────────────────────────────────────────────────────────────────────────
 //
-// On mobile, navigating to a data:text/vcard URI or a .vcf file triggers the
-// OS Contacts sheet automatically (iOS Contacts, Android Contacts app).
-//
-// On desktop, we create a hidden <a> with the download attribute and click it,
-// which prompts a standard "Save File" dialog.
-//
-// Why not data URI on desktop?
-//   Chrome/Edge block data URI navigations for security in some cases.
-//   A Blob URL is more reliable for desktop downloads.
+// For both mobile and desktop, we use a Blob URL and trigger a download
+// via a hidden anchor tag. 
+// - On mobile (iOS/Android), downloading a .vcf file natively prompts the 
+//   user to open it with their Contacts app, giving the perfect experience.
+// - On desktop, it triggers a standard "Save File" dialog.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function saveContactSmart(vcardContent: string, filename: string): void {
-  if (isMobileDevice()) {
-    // Mobile: navigate current tab to data URI — triggers native Contacts handler
-    // on both iOS Safari and Android Chrome/Samsung Internet.
-    const dataUri = 'data:text/vcard;charset=utf-8,' + encodeURIComponent(vcardContent);
-    window.location.href = dataUri;
-  } else {
-    // Desktop: Blob download via hidden anchor — avoids all popup blockers
-    const blob = new Blob([vcardContent], { type: 'text/vcard;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = filename;
-    anchor.style.display = 'none';
-    document.body.appendChild(anchor);
-    anchor.click();
-    // Clean up — revoke after a tick to let the browser start the download
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-      document.body.removeChild(anchor);
-    }, 200);
-  }
+  // Blob download via hidden anchor — avoids all popup blockers and works universally
+  const blob = new Blob([vcardContent], { type: 'text/vcard;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.style.display = 'none';
+  document.body.appendChild(anchor);
+  anchor.click();
+  // Clean up — revoke after a tick to let the browser start the download
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    document.body.removeChild(anchor);
+  }, 200);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. DIRECTIONS (Google Maps)
 // ─────────────────────────────────────────────────────────────────────────────
 //
-// Mobile:  Use comgooglemaps:// (Android) or maps:// (iOS) deep link first.
-//   iOS    → maps://maps.apple.com/?daddr=... (opens Apple Maps or Google Maps)
-//            We use the universal maps.apple.com URL which iOS intercepts;
-//            the user's default maps app opens.
-//   Android → intent://maps.google.com/... with a comgooglemaps:// fallback,
-//            then web URL. We use a simpler geo: URI which Android handles
-//            natively with any installed maps app.
+// Both iOS and Android natively intercept `https://maps.google.com/...` 
+// and `https://goo.gl/maps/...` URLs and open them perfectly in the native 
+// Google Maps app if installed (or Apple Maps if configured), dropping a pin 
+// exactly where intended.
 //
-// Desktop: Open maps.google.com in a new tab.
-//
-// Note: We use geo: URI on Android which is intercepted by ALL maps apps
-// (Google Maps, Waze, Maps.me etc.) giving users their preferred app.
+// Attempting to construct `geo:` or `maps://` URIs with raw text searches 
+// often results in generic search pages rather than exact pins.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function openDirectionsSmart(mapsWebUrl: string, query: string): void {
+export function openDirectionsSmart(mapsWebUrl: string, _query: string): void {
   if (isMobileDevice()) {
-    if (isIOS()) {
-      // Apple Maps universal link — iOS picks the user's default maps app
-      const encoded = encodeURIComponent(query);
-      openAppWithFallback(
-        `maps://maps.apple.com/?q=${encoded}`,
-        mapsWebUrl
-      );
-    } else {
-      // Android geo: URI — any installed maps app handles this
-      const encoded = encodeURIComponent(query);
-      openAppWithFallback(
-        `geo:0,0?q=${encoded}`,
-        mapsWebUrl
-      );
-    }
+    // On mobile, setting location.href lets the OS intercept the link
+    // and route it to the native Maps app automatically.
+    window.location.href = mapsWebUrl;
   } else {
     openInNewTab(mapsWebUrl);
   }
