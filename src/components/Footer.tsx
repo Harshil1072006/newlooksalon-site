@@ -1,4 +1,5 @@
 import { config } from "../config";
+import { openInstagram, openFacebook } from "../utils";
 
 const footerLinks = {
   Services: config.services.map(s => s.name).slice(0, 6), // Top 6 services
@@ -21,24 +22,22 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               {config.instagramUrl && (
-                <a
-                  href={config.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 border border-white/15 hover:border-[#fbb034] hover:text-[#fbb034] flex items-center justify-center font-['Poppins',sans-serif] font-bold text-[11px] text-white/50 transition-colors duration-200"
+                <button
+                  onClick={() => openInstagram()}
+                  aria-label="Visit our Instagram profile"
+                  className="w-9 h-9 border border-white/15 hover:border-[#fbb034] hover:text-[#fbb034] flex items-center justify-center font-['Poppins',sans-serif] font-bold text-[11px] text-white/50 transition-colors duration-200 bg-transparent cursor-pointer"
                 >
                   IG
-                </a>
+                </button>
               )}
               {config.facebookUrl && (
-                <a
-                  href={config.facebookUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 border border-white/15 hover:border-[#fbb034] hover:text-[#fbb034] flex items-center justify-center font-['Poppins',sans-serif] font-bold text-[11px] text-white/50 transition-colors duration-200"
+                <button
+                  onClick={() => openFacebook()}
+                  aria-label="Visit our Facebook page"
+                  className="w-9 h-9 border border-white/15 hover:border-[#fbb034] hover:text-[#fbb034] flex items-center justify-center font-['Poppins',sans-serif] font-bold text-[11px] text-white/50 transition-colors duration-200 bg-transparent cursor-pointer"
                 >
                   FB
-                </a>
+                </button>
               )}
             </div>
           </div>

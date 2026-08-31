@@ -1,5 +1,11 @@
 import { config } from "../config";
-import { openDirections, openGoogleReview, saveContact } from "../utils";
+import {
+  openDirections,
+  openGoogleReview,
+  saveContact,
+  openInstagram,
+  openFacebook,
+} from "../utils";
 
 export default function QuickLinks() {
   return (
@@ -7,11 +13,12 @@ export default function QuickLinks() {
       <div className="max-w-[1440px] mx-auto flex flex-wrap items-center justify-center gap-8 sm:gap-14 lg:gap-20">
         
         {config.instagramUrl && (
-          <a
-            href={config.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex flex-col items-center gap-3 cursor-pointer"
+          // On mobile: opens Instagram app if installed, else browser.
+          // On desktop: opens instagram.com in a new tab.
+          <button
+            onClick={() => openInstagram()}
+            aria-label="Visit our Instagram profile"
+            className="group flex flex-col items-center gap-3 cursor-pointer bg-transparent border-none p-0 m-0 focus:outline-none"
           >
             <div className="w-16 h-16 rounded-full border border-[#fbb034]/30 bg-[#fbb034]/5 flex items-center justify-center group-hover:bg-[#fbb034] group-hover:border-[#fbb034] group-hover:-translate-y-2 transition-all duration-300 shadow-lg shadow-[#fbb034]/5">
               <svg className="w-7 h-7 text-[#fbb034] group-hover:text-black transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -19,15 +26,16 @@ export default function QuickLinks() {
               </svg>
             </div>
             <span className="font-['Poppins',sans-serif] text-[14px] font-medium text-white group-hover:text-[#fbb034] transition-colors duration-300">Instagram</span>
-          </a>
+          </button>
         )}
 
         {config.facebookUrl && (
-          <a
-            href={config.facebookUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex flex-col items-center gap-3 cursor-pointer"
+          // On mobile: opens Facebook app if installed, else browser.
+          // On desktop: opens facebook.com in a new tab.
+          <button
+            onClick={() => openFacebook()}
+            aria-label="Visit our Facebook page"
+            className="group flex flex-col items-center gap-3 cursor-pointer bg-transparent border-none p-0 m-0 focus:outline-none"
           >
             <div className="w-16 h-16 rounded-full border border-[#fbb034]/30 bg-[#fbb034]/5 flex items-center justify-center group-hover:bg-[#fbb034] group-hover:border-[#fbb034] group-hover:-translate-y-2 transition-all duration-300 shadow-lg shadow-[#fbb034]/5">
               <svg className="w-7 h-7 text-[#fbb034] group-hover:text-black transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -35,7 +43,7 @@ export default function QuickLinks() {
               </svg>
             </div>
             <span className="font-['Poppins',sans-serif] text-[14px] font-medium text-white group-hover:text-[#fbb034] transition-colors duration-300">Facebook</span>
-          </a>
+          </button>
         )}
 
         {config.googleReviewUrl && (
