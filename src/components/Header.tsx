@@ -10,6 +10,16 @@ const navLinks = [
   { label: "Contact", href: "#contact" },
 ];
 
+// Smooth scroll to a section with header offset
+function scrollToSection(id: string) {
+  const el = document.getElementById(id);
+  if (el) {
+    const headerHeight = 96;
+    const top = el.getBoundingClientRect().top + window.scrollY - headerHeight;
+    window.scrollTo({ top, behavior: "smooth" });
+  }
+}
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("Home");
@@ -18,7 +28,11 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-white/5">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-16 min-h-[96px] py-3 flex items-center justify-between">
         {/* Logo */}
-        <a href="#home" className="flex items-center gap-3 shrink-0">
+        <a 
+          href="#home" 
+          onClick={(e) => { e.preventDefault(); scrollToSection("home"); setActiveLink("Home"); }}
+          className="flex items-center gap-3 shrink-0"
+        >
           <img
             src={logoImg}
             alt={config.name}
@@ -32,7 +46,11 @@ export default function Header() {
             <a
               key={link.label}
               href={link.href}
-              onClick={() => setActiveLink(link.label)}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveLink(link.label);
+                scrollToSection(link.href.replace("#", ""));
+              }}
               className={`font-['Poppins',sans-serif] font-bold text-[15px] transition-colors duration-200 hover:text-[#fbb034] ${
                 activeLink === link.label ? "text-[#fbb034]" : "text-white"
               }`}
@@ -69,7 +87,15 @@ export default function Header() {
             <a
               key={link.label}
               href={link.href}
-              onClick={() => { setActiveLink(link.label); setMenuOpen(false); }}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveLink(link.label);
+                setMenuOpen(false);
+                // Wait for menu to close, then scroll smoothly with header offset
+                setTimeout(() => {
+                  scrollToSection(link.href.replace("#", ""));
+                }, 150);
+              }}
               className={`font-['Poppins',sans-serif] font-bold text-[15px] transition-colors duration-200 ${
                 activeLink === link.label ? "text-[#fbb034]" : "text-white"
               }`}
