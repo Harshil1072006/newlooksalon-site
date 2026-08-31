@@ -49,16 +49,10 @@ export function isAndroid(): boolean {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Safe navigation helper
-// Using window.location.href for same-tab (mobile app intents) vs
-// window.open for new-tab (desktop browser links).
-// We NEVER use window.open for app deep links on mobile because:
-//   • Popup blockers kill window.open calls not initiated synchronously
-//   • window.location.href cannot be blocked by popup blockers
-//   • App intent URIs must navigate the current window to trigger OS routing
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Open a URL in a new browser tab (desktop pattern).
+ * Open a URL in a new browser tab.
  * Uses rel="noopener noreferrer" equivalent via the windowFeatures parameter.
  */
 function openInNewTab(url: string): void {
@@ -67,53 +61,15 @@ function openInNewTab(url: string): void {
   if (!win) window.location.href = url;
 }
 
-/**
- * Attempt to open a native app via a deep-link URI.
- * Falls back to the web URL after `timeoutMs` milliseconds if the OS
- * does not intercept the deep link (i.e. app not installed).
- *
- * Technique: set location.href to the deep link, then schedule a fallback.
- * If the OS handles it, the page stays loaded (user switches to app) and
- * the timeout is never visible. If not handled, the fallback fires.
- */
-function openAppWithFallback(appUrl: string, webUrl: string, timeoutMs = 1500): void {
-  // Record the time we started
-  const start = Date.now();
-  window.location.href = appUrl;
-
-  setTimeout(() => {
-    // If the page was hidden (user left for the app), elapsed >> timeoutMs
-    // document.hidden is true when the tab/page is backgrounded.
-    if (!document.hidden && Date.now() - start < timeoutMs + 200) {
-      // App didn't open → go to web fallback in same tab on mobile
-      window.location.href = webUrl;
-    }
-  }, timeoutMs);
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. WHATSAPP
-// ─────────────────────────────────────────────────────────────────────────────
-//
-// Mobile:  whatsapp://send?phone=...&text=...
-//   → Opens WhatsApp native app directly, pre-fills the message.
-//   → Falls back to https://wa.me/ if WhatsApp not installed.
-//
-// Desktop: https://web.whatsapp.com/send?phone=...&text=...
-//   → WhatsApp Web, opens in new tab.
-//
-// Why two different hosts?
-//   wa.me is a universal redirect; on desktop it often opens WhatsApp desktop
-//   app rather than WhatsApp Web. web.whatsapp.com forces the web interface.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function openWhatsAppSmart(phone: string, message: string): void {
   const encoded = encodeURIComponent(message);
-
   if (isMobileDevice()) {
-    const appUrl = `whatsapp://send?phone=${phone}&text=${encoded}`;
-    const webUrl = `https://wa.me/${phone}?text=${encoded}`;
-    openAppWithFallback(appUrl, webUrl);
+    // Universal link — OS will intercept and open WhatsApp app if installed
+    openInNewTab(`https://wa.me/${phone}?text=${encoded}`);
   } else {
     // WhatsApp Web — force browser interface, not desktop app
     openInNewTab(`https://web.whatsapp.com/send?phone=${phone}&text=${encoded}`);
@@ -122,13 +78,6 @@ export function openWhatsAppSmart(phone: string, message: string): void {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. SAVE CONTACT (vCard)
-// ─────────────────────────────────────────────────────────────────────────────
-//
-// For both mobile and desktop, we use a Blob URL and trigger a download
-// via a hidden anchor tag. 
-// - On mobile (iOS/Android), downloading a .vcf file natively prompts the 
-//   user to open it with their Contacts app, giving the perfect experience.
-// - On desktop, it triggers a standard "Save File" dialog.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function saveContactSmart(vcardContent: string, filename: string): void {
@@ -151,105 +100,35 @@ export function saveContactSmart(vcardContent: string, filename: string): void {
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. DIRECTIONS (Google Maps)
 // ─────────────────────────────────────────────────────────────────────────────
-//
-// Both iOS and Android natively intercept `https://maps.google.com/...` 
-// and `https://goo.gl/maps/...` URLs and open them perfectly in the native 
-// Google Maps app if installed (or Apple Maps if configured), dropping a pin 
-// exactly where intended.
-//
-// Attempting to construct `geo:` or `maps://` URIs with raw text searches 
-// often results in generic search pages rather than exact pins.
-// ─────────────────────────────────────────────────────────────────────────────
 
 export function openDirectionsSmart(mapsWebUrl: string, _query: string): void {
-  if (isMobileDevice()) {
-    // On mobile, setting location.href lets the OS intercept the link
-    // and route it to the native Maps app automatically.
-    window.location.href = mapsWebUrl;
-  } else {
-    openInNewTab(mapsWebUrl);
-  }
+  // Mobile OSes automatically intercept maps.google.com and open the Maps app.
+  openInNewTab(mapsWebUrl);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. INSTAGRAM
 // ─────────────────────────────────────────────────────────────────────────────
-//
-// Mobile:  instagram://user?username=... deep link, falls back to web.
-// Desktop: Open profile in new tab.
-//
-// Why not just the web URL on mobile?
-//   instagram.com detects mobile browsers and opens in-browser, but:
-//   - Strips features (DM, reel playback etc.) compared to the app
-//   - User experience is worse than the native app
-// ─────────────────────────────────────────────────────────────────────────────
 
-export function openInstagramSmart(profileUrl: string, username: string): void {
-  if (isMobileDevice()) {
-    openAppWithFallback(
-      `instagram://user?username=${username}`,
-      profileUrl
-    );
-  } else {
-    openInNewTab(profileUrl);
-  }
+export function openInstagramSmart(profileUrl: string, _username: string): void {
+  // Mobile OSes automatically intercept instagram.com and open the Instagram app.
+  openInNewTab(profileUrl);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. FACEBOOK
 // ─────────────────────────────────────────────────────────────────────────────
-//
-// Mobile:  fb://page/<PAGE_ID> deep link.
-//   NOTE: Facebook's fb:// scheme requires a numeric PAGE ID, not a username.
-//   We accept the page slug and use it for the web fallback.
-//   If you have a numeric Page ID, pass it as pageId for a better app experience.
-//
-// Desktop: Open page in new tab.
-// ─────────────────────────────────────────────────────────────────────────────
 
-export function openFacebookSmart(pageUrl: string, pageId?: string): void {
-  if (isMobileDevice()) {
-    if (pageId) {
-      // Numeric Page ID available — direct app deep link
-      openAppWithFallback(`fb://page/${pageId}`, pageUrl);
-    } else {
-      // No numeric ID — use fbrpc:// universal link which Facebook itself uses
-      // This works even without knowing the numeric ID.
-      openAppWithFallback(`fb://facewebmodal/auth?target_url=${encodeURIComponent(pageUrl)}`, pageUrl);
-    }
-  } else {
-    openInNewTab(pageUrl);
-  }
+export function openFacebookSmart(pageUrl: string, _pageId?: string): void {
+  // Mobile OSes automatically intercept facebook.com and open the Facebook app.
+  openInNewTab(pageUrl);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 6. GOOGLE REVIEW
 // ─────────────────────────────────────────────────────────────────────────────
-//
-// Mobile:  Opens Google Maps app (which hosts reviews) via deep link.
-//          If you have a Google Place ID, we use the maps/place deep link.
-//          Otherwise falls back to the search result.
-//
-// Desktop: Open review URL in new tab.
-// ─────────────────────────────────────────────────────────────────────────────
 
-export function openGoogleReviewSmart(reviewUrl: string, placeId?: string): void {
-  if (isMobileDevice()) {
-    if (placeId) {
-      // Direct place deep link in Google Maps app
-      openAppWithFallback(
-        `https://maps.google.com/?cid=${placeId}`,
-        reviewUrl
-      );
-    } else {
-      // No Place ID — open review URL in Maps app via comgooglemaps://
-      const encoded = encodeURIComponent(reviewUrl);
-      openAppWithFallback(
-        `comgooglemaps://?q=${encoded}`,
-        reviewUrl
-      );
-    }
-  } else {
-    openInNewTab(reviewUrl);
-  }
+export function openGoogleReviewSmart(reviewUrl: string, _placeId?: string): void {
+  // Mobile OSes automatically intercept Google search/maps links and open the Google app/Maps app.
+  openInNewTab(reviewUrl);
 }
